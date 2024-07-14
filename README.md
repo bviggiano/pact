@@ -3,7 +3,9 @@
 
 PAGE is a Github based tool designed to help streamline the process of creating, versioning, and distributing python based programming assignments.
 
-![PAGEImage](/page.webp)
+<center>
+<img src="page.webp" width="200" height="200">
+</center>
 
 
 ## Key Features ✨
