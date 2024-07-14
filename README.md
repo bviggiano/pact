@@ -28,6 +28,8 @@ The easist way to get started with PAGE is to create a `private` fork of this re
 2. Remove the `.git` folder from the cloned repository. (This will remove the git history from the local version of the repository).
 3. Create a new private repository containing the contents of the cloned repository. 
 
+Once you have your fork of the repository set up, you can begin adding your assignments to the repository! Check out the [./page/README.md](./page/README.md) file for more information on how to use PAGE to create assignments.
+
 
 ## Contributing 🤝
 Contributions to PAGE are welcome! Whether it's adding new features, fixing bugs, or improving documentation, all contributions are appreciated. 😁
