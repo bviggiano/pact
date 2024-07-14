@@ -1,7 +1,7 @@
 # Python Assignment Generation Environment (PAGE) 📄
 
 
-PAGE is a Github based tool designed to help streamline the process of creating, versioning, and distributing python based programming assignments.
+PAGE is a simple Github based tool designed to help streamline the process of creating, versioning, and distributing python based programming assignments.
 
 <center>
 <img src="page.webp" width="200" height="200">
@@ -9,7 +9,7 @@ PAGE is a Github based tool designed to help streamline the process of creating,
 
 
 ## Key Features ✨
-- **Configurable Masking**: Easily convert fully solved programming assignments into student-friendly "skelton" files by masking solution code and replacing with placeholders.
+- **Configurable Masking**: Easily convert programming assignment solutions into student-friendly "skelton" files by masking solution code and replacing with placeholders.
 
 - **Testing and Grading integration**: 
 Write unit tests for assignments that can be utilized with Gradescope or your own custom testing framework to automatically grade student submissions.
