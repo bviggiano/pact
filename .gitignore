@@ -1,12 +1,4 @@
-# By default, ignore all .py and .ipynb files in the assignment directories
-/assignments/**/*.py
-/assignments/**/*.ipynb
-
-# Make exceptions for py and ipynb files in the assignment directories that start with `key_` or `test_`
-!/assignments/**/key_*.py
-!/assignments/**/test_*.py
-!/assignments/**/key_*.ipynb
-!/assignments/**/test_*.ipynb
+#
 
 
 # Added

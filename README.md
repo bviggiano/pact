@@ -1,7 +1,7 @@
-# Python Assignment Generation Environment (PAGE) 📄
+# Programming Assignment Generation Environment (PAGE) 📄
 
 
-PAGE is a simple Github based tool designed to help streamline the process of creating, versioning, and distributing python based programming assignments.
+PAGE is a simple Github based tool designed to help streamline the process of creating, versioning, and distributing programming assignments.
 
 <center>
 <img src="page.webp" width="200" height="200">

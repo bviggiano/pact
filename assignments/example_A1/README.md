@@ -9,7 +9,9 @@ KEY_ONLY_END
 
 
 ### Set Up 🛠
-To get started with this assignment, you will first need to install the required dependencies. You can do this by running the following command from the root of the repository:
+To begin, we will need to set up an virtual environment with the necessary packages. A virtual environment is a self-contained directory that contains a Python interpreter (aka Python installation) and any additional packages/modules that are required for a specific project. It allows you to isolate your project's dependencies from other projects that may have different versions or requirements of the same packages.
+
+Create a new virtual environment for this assignment by running the following command in your terminal:
 
 ```bash
 conda env create -f environment.yml
