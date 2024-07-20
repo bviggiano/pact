@@ -1,6 +1,10 @@
 
 # Example Assignment 2: Implement GPT
 
+KEY_ONLY_START
+This is an example programming project assignment.
+KEY_ONLY_END
+
 In this assignment, you are tasked with implementing a simplified version of the Generative Pre-trained Transformer (GPT). 
 
 This assignment was sourced from [karpathy/minGPT](https://github.com/karpathy/minGPT)
@@ -14,3 +18,8 @@ Create a new virtual environment for this assignment by running the following co
 ```bash
 conda env create -f environment.yml
 ```
+
+
+## Assignment Instructions 📜
+
+TODO
