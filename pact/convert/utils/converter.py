@@ -6,8 +6,8 @@ import os
 import json
 from typing import List
 from copy import deepcopy
-from pact.convert.utils.codeblock_infra import CodeBlockManager
-from pact.convert.utils.mask_infra import MaskManager
+from pact.convert.utils.codeblock_infra import CodeBlockManager, CodeBlockType
+from pact.convert.utils.mask_infra import MaskManager, MaskType
 from pact.convert.codeblocks import CODEBLOCK_TYPES
 from pact.convert.masks import MASKTYPES
 
@@ -24,23 +24,34 @@ class FileConverter:
     Converts solution versions of assignment files into student versions.
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        codeblock_types: List[CodeBlockType] = CODEBLOCK_TYPES,
+        mask_types: List[MaskType] = MASKTYPES,
+    ):
         """
         Creates a new FileConverter.
+
+        Args:
+            codeblock_types (List[CodeBlockType], optional): A list of codeblock
+                types to use in the converter. Defaults to CODEBLOCK_TYPES as
+                defined in the codeblocks module.
+            mask_types (List[MaskType], optional): A list of mask types to use in
+                the converter. Defaults to MASKTYPES.
         """
 
         # Create codeblock manager
         self.codeblock_manager = CodeBlockManager()
 
         # Add codeblock types to the manager
-        for codeblock_type in CODEBLOCK_TYPES:
+        for codeblock_type in codeblock_types:
             self.codeblock_manager.add_codeblock_type(codeblock_type)
 
         # Create mask manager
         self.mask_manager = MaskManager()
 
         # Add mask types to the manager
-        for mask_type in MASKTYPES:
+        for mask_type in mask_types:
             self.mask_manager.add_mask_type(mask_type)
 
     def convert_file(self, source_file_path: str, destination_folder_path: str) -> str:
