@@ -8,7 +8,7 @@ strings.
 You can create custom codeblock instances by following the examples below.
 """
 
-from page.convert.utils.codeblock_infra import (
+from pact.convert.utils.codeblock_infra import (
     CodeBlockType,
 )
 

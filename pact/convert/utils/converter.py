@@ -6,10 +6,10 @@ import os
 import json
 from typing import List
 from copy import deepcopy
-from page.convert.utils.codeblock_infra import CodeBlockManager
-from page.convert.utils.mask_infra import MaskManager
-from page.convert.codeblocks import CODEBLOCK_TYPES
-from page.convert.masks import MASKTYPES
+from pact.convert.utils.codeblock_infra import CodeBlockManager
+from pact.convert.utils.mask_infra import MaskManager
+from pact.convert.codeblocks import CODEBLOCK_TYPES
+from pact.convert.masks import MASKTYPES
 
 
 IPYNB_CELL_EXCLUDE = "ANSWER_KEY_CELL"

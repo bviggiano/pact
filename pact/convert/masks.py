@@ -7,7 +7,7 @@ mask sections of text/code within the assignment files using predefined trigger 
 You can create custom mask instances by following the examples below.
 """
 
-from page.convert.utils.mask_infra import (
+from pact.convert.utils.mask_infra import (
     MaskType,
 )
 

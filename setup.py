@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="page",
+    name="pact",
     version="0.1.0",
-    package_dir={"": "page"},
-    packages=find_packages(where="page"),
+    package_dir={"": "pact"},
+    packages=find_packages(where="pact"),
     install_requires=["zipp"],
 )

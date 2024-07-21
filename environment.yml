@@ -1,4 +1,4 @@
-name: page_env
+name: pact_env
 dependencies:
   - python=3.11
   - pip

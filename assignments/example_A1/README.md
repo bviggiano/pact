@@ -1,7 +1,7 @@
 # Pandas Vectorized Operations 🐼
 
 KEY_ONLY_START
->This is an example implementation of an assignment utilizing the PAGE tool. This text will be removed by the conversion script in the student facing version. The rest of this README contains assignment instructions for students.
+>This is an example implementation of an assignment utilizing the PACT tool. This text will be removed by the conversion script in the student facing version. The rest of this README contains assignment instructions for students.
 
 KEY_ONLY_END
 
