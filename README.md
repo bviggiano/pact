@@ -23,16 +23,17 @@ PACT works by converting fully solved programming assignments into versions that
 ## Getting Started 🚀
 This PACT repository is designed to be utilized as a starting template for a repository containing the assignments for your course. Since this repository will contain the solution versions of the assignments, it is recommended to keep it private to prevent students from accessing the solution code.
 
-The easist way to get started with PACT is to create a `private` fork of this repository. However, creating a private fork is a paid feature on Github that not all users may have access to. If you do not have access to a paid Github account, you can still use this repository as a starting template for your own private repository by following the steps below:
-1. Clone this repository to your local machine.
-2. Remove the `.git` folder from the cloned repository. (This will remove the git history from the local version of the repository).
-3. Rename the root folder of the cloned repository to the name of your course: (`CS101`)
-4. Create a new private repository containing the contents of the cloned repository using `git init`
+The easiest way to get started with PACT is to use this repository as a template.
+1. Navigate to [github.com/bviggiano/pact](https://github.com/bviggiano/pact)]
+2. Click on the "Use this template" button, located above the file list and next to the "Code" button.
+3. Select "Create a new repository"
+4. On the repository creation page, choose a repository name (e.g., `CS101`) and set the visibility to `private`.
 
 
 Finally, after you have your private repository set up, set up the pact conda environment by running the following commands from the root of the repository:
 ```bash
 conda env create -f environment.yml
+conda activate pact_env
 pip install -e .
 ```
 
