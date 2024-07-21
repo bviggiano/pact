@@ -42,13 +42,19 @@ class CausalSelfAttention(nn.Module):
     def __init__(self, config):
         super().__init__()
         assert config.n_embd % config.n_head == 0
+
         # key, query, value projections for all heads, but in a batch
-        self.c_attn = nn.Linear(config.n_embd, 3 * config.n_embd)
+        self.c_attn = nn.Linear(config.n_embd, 3 * config.n_embd)  # MASK_ASSIGNMENT
+
         # output projection
-        self.c_proj = nn.Linear(config.n_embd, config.n_embd)
+        self.c_proj = nn.Linear(config.n_embd, config.n_embd)  # MASK_ASSIGNMENT
+
         # regularization
-        self.attn_dropout = nn.Dropout(config.attn_pdrop)
-        self.resid_dropout = nn.Dropout(config.resid_pdrop)
+        self.attn_dropout = nn.Dropout(config.attn_pdrop)  # MASK_ASSIGNMENT
+
+        # residual dropout
+        self.resid_dropout = nn.Dropout(config.resid_pdrop)  # MASK_ASSIGNMENT
+
         # causal mask to ensure that attention is only applied to the left in the input sequence
         self.register_buffer(
             "bias",
@@ -56,8 +62,10 @@ class CausalSelfAttention(nn.Module):
                 1, 1, config.block_size, config.block_size
             ),
         )
-        self.n_head = config.n_head
-        self.n_embd = config.n_embd
+
+        self.n_head = config.n_head  # MASK_ASSIGNMENT
+
+        self.n_embd = config.n_embd  # MASK_ASSIGNMENT
 
     def forward(self, x):
 
@@ -101,9 +109,13 @@ class Block(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.ln_1 = nn.LayerNorm(config.n_embd)
+
+        self.ln_1 = nn.LayerNorm(config.n_embd)  # MASK_ASSIGNMENT
+
         self.attn = CausalSelfAttention(config)
-        self.ln_2 = nn.LayerNorm(config.n_embd)
+
+        self.ln_2 = nn.LayerNorm(config.n_embd)  # MASK_ASSIGNMENT
+
         self.mlp = nn.ModuleDict(
             dict(
                 c_fc=nn.Linear(config.n_embd, 4 * config.n_embd),

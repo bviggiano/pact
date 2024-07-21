@@ -33,7 +33,7 @@ The easist way to get started with PAGE is to create a `private` fork of this re
 Finally, after you have your private repository set up, set up the page conda environment by running the following commands from the root of the repository:
 ```bash
 conda env create -f environment.yml
-pip install .
+pip install -e .
 ```
 
 You can begin developing your assignments to the repository! Check out the [./page/README.md](./page/README.md) file for more information on how to use PAGE to create assignments.

@@ -7,23 +7,15 @@ import json
 from typing import List
 from copy import deepcopy
 from page.convert.utils.codeblock_infra import CodeBlockManager
+from page.convert.utils.mask_infra import MaskManager
 from page.convert.codeblocks import CODEBLOCK_TYPES
+from page.convert.masks import MASKTYPES
 
-
-# INDICATORS: The following strings are used to tell the converter to perform
-# specific actions.
 
 IPYNB_CELL_EXCLUDE = "ANSWER_KEY_CELL"
 """
 IPYNB_CELL_EXCLUDE: If this string is found in a cell of an ipynb file, the entire
 cell of the ipynb will be excluded in the student version of the file.
-"""
-
-MASK_AFTER_ASSIGNMENT = "MASK_AFTER_ASSIGNMENT"
-"""
-MASK_AFTER_ASSIGNMENT: If this string is found after an assignment statement in
-a line, the code following the assignment will be masked in the student version.
-Code will be masked until the first line that only contains whitespace.
 """
 
 
@@ -43,6 +35,13 @@ class FileConverter:
         # Add codeblock types to the manager
         for codeblock_type in CODEBLOCK_TYPES:
             self.codeblock_manager.add_codeblock_type(codeblock_type)
+
+        # Create mask manager
+        self.mask_manager = MaskManager()
+
+        # Add mask types to the manager
+        for mask_type in MASKTYPES:
+            self.mask_manager.add_mask_type(mask_type)
 
     def convert_file(self, source_file_path: str, destination_folder_path: str) -> str:
         """
@@ -149,6 +148,7 @@ class FileConverter:
 
         # Loop through each line in the source text
         inside_code_block = False
+        inside_mask = False
         for line in source_text_lines:
 
             # Update the status of the code block manager based on the current line
@@ -157,16 +157,35 @@ class FileConverter:
             # Collect the current status of the code block manager
             codeblock_active = self.codeblock_manager.is_codeblock_active()
 
+            # Update the status of the mask manager based on the current line
+            self.mask_manager.update_state(line)
+
+            # Collect the current status of the mask manager
+            mask_active = self.mask_manager.is_mask_active()
+
+            # If both a mask and code block are active, raise an error
+            if mask_active and codeblock_active:
+                raise ValueError("Both a mask and code block are active.")
+
             # If we are starting a code block, add the replacement text
             if not inside_code_block and codeblock_active:
                 new_lines.append(self.codeblock_manager.get_replacement_str())
 
-            # If we are not in a code block, add the line to the new text
-            elif not inside_code_block and not codeblock_active:
+            # If we are starting a mask, add the replacement text
+            elif not inside_mask and mask_active:
+                new_lines.append(self.mask_manager.get_masked_str(line))
+
+            # If we are not in a code block, AND not in a mask: add the line to the new text
+            elif (not inside_code_block and not codeblock_active) and (
+                not inside_mask and not mask_active
+            ):
                 new_lines.append(line)
 
             # Update the status of the inside code block flag
             inside_code_block = codeblock_active
+
+            # Update the status of the inside mask flag
+            inside_mask = mask_active
 
         # Check for open code block at end of file
         self.codeblock_manager.end_of_file_check()
