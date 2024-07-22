@@ -8,6 +8,7 @@ import os
 import shutil
 from pact.convert.utils.file_converter import FileConverter
 from pact.zip.zip_assignment import zip_assignment_dir
+from pact.zip.zip_submission import create_submission_file
 import re
 
 # The name of the generated student version of the assignment
@@ -100,6 +101,17 @@ class PrimeConverter:
 
         # If the source file/folder is a folder, zip the folder
         if os.path.isdir(source_file_or_folder):
+
+            # Create the student submission zip file
+            create_submission_file(
+                os.path.join(
+                    self.master_generation_location,
+                    os.path.basename(source_file_or_folder),
+                ),
+                sub_list=self.sub_list,
+            )
+
+            # Create the zipped assignment folder
             zip_assignment_dir(
                 os.path.join(
                     self.master_generation_location,
