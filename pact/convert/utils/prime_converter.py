@@ -8,9 +8,14 @@ import os
 import shutil
 from pact.convert.utils.file_converter import FileConverter
 from pact.zip.zip_assignment import zip_assignment_dir
+import re
 
 # The name of the generated student version of the assignment
 GENERATED_LOCATION_NAME = "STUDENT_VERSION"
+
+# Special file names to ignore during conversion
+BLACK_LIST_FILE_NAME = "black_list.pact"
+SUB_LIST_FILE_NAME = "sub_list.pact"
 
 
 class PrimeConverter:
@@ -29,10 +34,61 @@ class PrimeConverter:
         # Placeholder for the master generation location
         self.master_generation_location = None
 
+        # Placeholder for black list
+        self.black_list = []
+
+        # Placeholder for white list
+        self.sub_list = []
+
+    def reset(self):
+        """
+        Resets the PrimeConverter.
+        """
+        self.master_generation_location = None
+        self.black_list = []
+        self.sub_list = []
+
+    def load_black_list(self, source_folder: str):
+        """
+        Loads the black list of files to ignore during conversion.
+        """
+
+        if not os.path.exists(os.path.join(source_folder, BLACK_LIST_FILE_NAME)):
+            return
+
+        # Load the black list
+        with open(os.path.join(source_folder, BLACK_LIST_FILE_NAME), "r") as file:
+            self.black_list = file.read().splitlines()
+
+    def load_sub_list(self, source_folder: str):
+        """
+        Loads the submission list of files include in student submission generator.
+        """
+
+        if not os.path.exists(os.path.join(source_folder, SUB_LIST_FILE_NAME)):
+            return
+
+        # Load the white list
+        with open(os.path.join(source_folder, SUB_LIST_FILE_NAME), "r") as file:
+            self.sub_list = file.read().splitlines()
+
     def convert(self, source_file_or_folder: str):
         """
         Converts the solution version of the assignment file/folder into student versions.
+
+        Args:
+            source_file_or_folder (str): The path to the solution version of the assignment file/folder.
         """
+
+        # Reset the converter
+        self.reset()
+
+        # If we have a folder, check if special files exist
+        if os.path.isdir(source_file_or_folder):
+            self.load_black_list(source_file_or_folder)
+            self.load_sub_list(source_file_or_folder)
+            print(f"Black list: {self.black_list}")
+            print(f"Sub list: {self.sub_list}")
 
         # Set the master generation location (to be used by the conversion filter)
         self.master_generation_location = self._prepare_generation_location(
@@ -110,6 +166,18 @@ class PrimeConverter:
         # Ignore .DS_Store files
         if ".DS_Store" in source_file_or_folder:
             return False
+
+        # Ignore special files
+        if os.path.basename(source_file_or_folder) in [
+            BLACK_LIST_FILE_NAME,
+            SUB_LIST_FILE_NAME,
+        ]:
+            return False
+
+        # Ignore files in the black list
+        for black_list_item in self.black_list:
+            if re.search(black_list_item, source_file_or_folder):
+                return False
 
         return True
 
