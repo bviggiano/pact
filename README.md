@@ -107,8 +107,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Happy Coding! 🚀
 </center>
 
-### Courses that use PACT 📚
-- [BIOMEDIN 215: Data Driven Medicine](https://github.com/biomedin-215)
-
-> Feel free to add your course here by submitting a pull request!
-

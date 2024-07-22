@@ -1,5 +1,5 @@
 """
-converter.py
+file_converter.py
 """
 
 import os
@@ -77,7 +77,9 @@ class FileConverter:
             contents = self._convert_ipynb_file(source_file_path)
         # Otherwise, we can convert the file as normal
         else:
+
             # Read in the file as a string
+            og_lines = None
             with open(source_file_path, "r") as file:
                 og_lines = file.readlines()
 

@@ -21,7 +21,7 @@ from convert_tests.mock_solution_files import (
     MOCK_SOLUTION_FILES,
 )
 
-from pact.convert.utils.converter import FileConverter
+from pact.convert.utils.file_converter import FileConverter
 
 
 # Create a FileConverter instance containing the codeblocks

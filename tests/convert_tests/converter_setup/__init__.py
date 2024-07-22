@@ -20,6 +20,7 @@ def get_converted_file_content(converter, file_path, tmp_path):
 
     # Read in the converted file
     converted_file_path = os.path.join(tmp_path, file_name)
+
     with open(converted_file_path, "r") as file:
         return file.read()
 

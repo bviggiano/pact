@@ -1,5 +1,6 @@
 # Do not include failed test ouptut
 *tests/failed_test_output*
+*STUDENT_VERSION*
 
 
 # Added

@@ -253,6 +253,10 @@ class CodeBlockType:
         Returns:
             str: The replacement string with the specified indentation level.
         """
+        # If the replacement string is empty, return empty string
+        if self.replacement_str == "":
+            return ""
+
         # Remove one leading \n character if it exists
         if self.replacement_str[0] == "\n":
             replacement_str = self.replacement_str[1:]
