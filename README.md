@@ -28,7 +28,7 @@ def forward(self, x):
     return x
 ```
 
-PACT will then use these keywords to generate a student version of the assignment that masks the
+PACT will then use these keywords to generate a student version of the assignment file that masks the
 code between the `STUDENT_CODE_START` and `STUDENT_CODE_END` keywords. The masked code will be replaced with a customizable comment indicating that the student should complete the code in that region.
 
 ```python
@@ -47,15 +47,41 @@ def forward(self, x):
     return x
 ```
 
+PACT also supports the ability to partially mask lines, allowing us to provide a
+bit more structure to the student version of the assignment. For example, we can
+mask only the portion of the line after the assignment operator:
 
+```python
+def add(a, b):
+    """
+    Adds two numbers and returns the result.
+    """
 
+    c = a + b # MASK_ASSIGNMENT
+
+    return x
+```
+
+In the student facing version of the assignment, the masked line can be replaced
+with a customizable string:
+
+```python
+def add(a, b):
+    """
+    Adds two numbers and returns the result.
+    """
+
+    c = None # TODO: Implement
+
+    return c
+```
 
 
 ## Getting Started 🚀
 This PACT repository is designed to be utilized as a starting template for a repository containing the assignments for your course. Since this repository will contain the solution versions of the assignments, it is recommended to keep it private to prevent students from accessing the solution code.
 
 The easiest way to get started with PACT is to use this repository as a template.
-1. Navigate to [github.com/bviggiano/pact](https://github.com/bviggiano/pact)]
+1. Navigate to [github.com/bviggiano/pact](https://github.com/bviggiano/pact)
 2. Click on the "Use this template" button, located above the file list and next to the "Code" button.
 3. Select "Create a new repository"
 4. On the repository creation page, choose a repository name (e.g., `CS101`) and set the visibility to `private`.
@@ -73,3 +99,16 @@ You can begin developing your assignments to the repository! Check out the [./pa
 
 ## Contributing 🤝
 Contributions to PACT are welcome! Whether it's adding new features, fixing bugs, or improving documentation, all contributions are appreciated. 😁
+
+## License 📝
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+<center>
+Happy Coding! 🚀
+</center>
+
+### Courses that use PACT 📚
+- [BIOMEDIN 215: Data Driven Medicine](https://github.com/biomedin-215)
+
+> Feel free to add your course here by submitting a pull request!
+
