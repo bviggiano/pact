@@ -5,9 +5,9 @@ This should be unchanged = 2
 This should be unchanged = 2
 
 
-This part should be unchanged = but this part should be removed # ASSIGNMENT_MASK XXXX
+This part should be unchanged = but this part should be removed # MASK_ASSIGNMENT XXXX
 
-This part should be unchanged = but this part should be removed # ASSIGNMENT_MASK XXXX
+This part should be unchanged = but this part should be removed # MASK_ASSIGNMENT XXXX
 This should be removed as well XXXX
 And this XXXX
 

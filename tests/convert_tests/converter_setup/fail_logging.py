@@ -43,11 +43,13 @@ def log_failed_test(
     os.makedirs(failed_test_folder, exist_ok=True)
 
     # Copy the source file to the failed test folder
-    source_file_destination = os.path.join(failed_test_folder, file_name)
+    source_file_destination = os.path.join(failed_test_folder, "source_" + file_name)
     shutil.copy(source_file_path, source_file_destination)
 
     # Copy the converted file to the failed test folder
-    converted_file_destination = os.path.join(failed_test_folder, file_name)
+    converted_file_destination = os.path.join(
+        failed_test_folder, "converted_" + file_name
+    )
     shutil.copy(converted_file_path, converted_file_destination)
 
     # Create the additional message string
@@ -57,8 +59,9 @@ def log_failed_test(
         add_string = "\n-".join(additional_messages)
     add_string = "-" + add_string
 
+    # Create fail message file
+    with open(os.path.join(failed_test_folder, "fail_message.txt"), "w") as file:
+        file.write(f"Test {test_name} fail message(s):" + f"\n{add_string}")
+
     # Return the error message
-    return (
-        f"Test {test_name} failed. See the failed test output in {failed_test_folder}"
-        f"\n{add_string}"
-    )
+    return f"Test {test_name} failed. See: {failed_test_folder}" f"\n{add_string}"

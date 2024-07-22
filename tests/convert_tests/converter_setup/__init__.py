@@ -2,7 +2,10 @@ import json
 import os
 from convert_tests.converter_setup.ex_codeblock import CODEBLOCK_TYPES
 from convert_tests.converter_setup.ex_masks import MASKTYPES
-from convert_tests.converter_setup.fail_logging import log_failed_test
+from convert_tests.converter_setup.fail_logging import (
+    log_failed_test,
+    failed_test_output_dir,
+)
 
 
 def get_converted_file_content(converter, file_path, tmp_path):
