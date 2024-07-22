@@ -1,3 +1,0 @@
-# `pact/autograder`
-
-TODO
