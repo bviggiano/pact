@@ -5,6 +5,7 @@ file_converter.py
 import os
 import json
 from typing import List
+import shutil
 from copy import deepcopy
 from pact.convert.utils.codeblock_infra import CodeBlockManager, CodeBlockType
 from pact.convert.utils.mask_infra import MaskManager, MaskType
@@ -68,6 +69,9 @@ class FileConverter:
             str: The converted file as a string.
         """
 
+        # Create the destination folder if it does not exist
+        os.makedirs(destination_folder_path, exist_ok=True)
+
         # Collect the file extension
         _, ext = os.path.splitext(source_file_path)
 
@@ -76,12 +80,25 @@ class FileConverter:
         if ext == ".ipynb":
             contents = self._convert_ipynb_file(source_file_path)
         # Otherwise, we can convert the file as normal
+        elif ext in [".png", ".jpg", ".jpeg", ".gif", ".tiff"]:
+            # Copy the image file
+            shutil.copyfile(
+                source_file_path,
+                os.path.join(
+                    destination_folder_path, os.path.basename(source_file_path)
+                ),
+            )
+            return
         else:
 
             # Read in the file as a string
             og_lines = None
-            with open(source_file_path, "r") as file:
-                og_lines = file.readlines()
+            try:
+                with open(source_file_path, "r") as file:
+                    og_lines = file.readlines()
+            except UnicodeDecodeError:
+                print(f"- WARNING: Could not read file: {source_file_path}. Skipping.")
+                return
 
             # Process the text in the file
             final_lines = self._convert_source_text(og_lines)
@@ -92,9 +109,6 @@ class FileConverter:
         # Save the converted file to the destination folder
         file_name = os.path.basename(source_file_path)
         destination_file_path = os.path.join(destination_folder_path, file_name)
-
-        # Create the destination folder if it does not exist
-        os.makedirs(destination_folder_path, exist_ok=True)
 
         with open(destination_file_path, "w") as file:
             file.write(contents)

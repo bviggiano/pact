@@ -19,7 +19,7 @@ class PrimeConverter:
     Converts solution versions of assignments into student versions.
     """
 
-    def __init__(self, source_file_or_folder: str):
+    def __init__(self):
         """
         Creates a new PrimeConverter.
         """
@@ -27,21 +27,21 @@ class PrimeConverter:
         # Create a file converter
         self.file_converter = FileConverter()
 
-        # Save the master source file/folder
-        self.master_source = source_file_or_folder
+        # Placeholder for the master generation location
+        self.master_generation_location = None
 
-        # Determine the appropriate generation location
-        self.master_generation_location = self._prepare_generation_location(
-            source_file_or_folder
-        )
-
-    def convert(self):
+    def convert(self, source_file_or_folder: str):
         """
         Converts the solution version of the assignment file/folder into student versions.
         """
 
+        # Set the master generation location (to be used by the conversion filter)
+        self.master_generation_location = self._prepare_generation_location(
+            source_file_or_folder
+        )
+
         # Convert the source file/folder
-        self._convert(self.master_source, self.master_generation_location)
+        self._convert(source_file_or_folder, self.master_generation_location)
 
     def _convert(self, source_file_or_folder: str, generation_location: str):
         """
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Create prime converter
-    prime_converter = PrimeConverter(source_file_or_folder=args.source_file_or_folder)
+    prime_converter = PrimeConverter()
 
     # Convert the source file/folder
-    prime_converter.convert()
+    prime_converter.convert(source_file_or_folder=args.source_file_or_folder)
