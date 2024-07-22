@@ -7,17 +7,48 @@ PACT is a simple Github based tool designed to help streamline the process of cr
     <img src="pact.webp" width="200" height="200">
 </center>
 
-
-## Key Features ✨
-- **Configurable Masking**: Easily convert programming assignment solutions into student-friendly "skelton" files by masking solution code and replacing with placeholders.
-
-- **Testing and Grading integration**: 
-Write unit tests for assignments that can be utilized with Gradescope or your own custom testing framework to automatically grade student submissions.
-
-- **Version Control**: Automatically manage version control for course assignments, allowing for easy tracking of changes and updates to various assignment files.
-
 ## How it works! 🛠️
 PACT works by converting fully solved programming assignments into versions that are ready to distribute to students. This customizable behavior is achieved through the use of keywords and comments in the solution version of the assignments that PACT can recognize and act upon.
+
+Here's an example! Let's say we want students to implement the forward function
+of an attention block. We indicate the region of code that the students should
+complete by surrounding it with customizable trigger keywords:
+    
+```python
+def forward(self, x):
+    """
+    Forward pass of the attention block.
+    """
+
+    # STUDENT_CODE_START
+    x = x + self.attn(self.ln_1(x))
+    x = x + self.mlpf(self.ln_2(x))
+    # STUDENT_CODE_END
+
+    return x
+```
+
+PACT will then use these keywords to generate a student version of the assignment that masks the
+code between the `STUDENT_CODE_START` and `STUDENT_CODE_END` keywords. The masked code will be replaced with a customizable comment indicating that the student should complete the code in that region.
+
+```python
+def forward(self, x):
+    """
+    Forward pass of the attention block.
+    """
+
+    # ==== YOUR CODE HERE ====
+
+    # TODO: Implement
+    pass
+
+    # === YOUR CODE HERE ===
+
+    return x
+```
+
+
+
 
 
 ## Getting Started 🚀
