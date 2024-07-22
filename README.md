@@ -7,74 +7,12 @@ PACT is a simple Github based tool designed to help streamline the process of cr
     <img src="pact.webp" width="200" height="200">
 </center>
 
-## How it works! 🛠️
-PACT works by converting fully solved programming assignments into versions that are ready to distribute to students. This customizable behavior is achieved through the use of keywords and comments in the solution version of the assignments that PACT can recognize and act upon.
-
-Here's an example! Let's say we want students to implement the forward function
-of an attention block. We indicate the region of code that the students should
-complete by surrounding it with customizable trigger keywords:
-    
-```python
-def forward(self, x):
-    """
-    Forward pass of the attention block.
-    """
-
-    # STUDENT_CODE_START
-    x = x + self.attn(self.ln_1(x))
-    x = x + self.mlpf(self.ln_2(x))
-    # STUDENT_CODE_END
-
-    return x
-```
-
-PACT will then use these keywords to generate a student version of the assignment file that masks the
-code between the `STUDENT_CODE_START` and `STUDENT_CODE_END` keywords. The masked code will be replaced with a customizable comment indicating that the student should complete the code in that region.
-
-```python
-def forward(self, x):
-    """
-    Forward pass of the attention block.
-    """
-
-    # ==== YOUR CODE HERE ====
-
-    # TODO: Implement
-    pass
-
-    # === YOUR CODE HERE ===
-
-    return x
-```
-
-PACT also supports the ability to partially mask lines, allowing us to provide a
-bit more structure to the student version of the assignment. For example, we can
-mask only the portion of the line after the assignment operator:
-
-```python
-def add(a, b):
-    """
-    Adds two numbers and returns the result.
-    """
-
-    c = a + b # MASK_ASSIGNMENT
-
-    return x
-```
-
-In the student facing version of the assignment, the masked line can be replaced
-with a customizable string:
-
-```python
-def add(a, b):
-    """
-    Adds two numbers and returns the result.
-    """
-
-    c = None # TODO: Implement
-
-    return c
-```
+## What is PACT? 📝
+The core functionality of PACT is to provide a way to automatically convert
+the "solution" form of a programming assignment into a version that is ready to
+be distributed to students. To do this, PACT relies on a few keyword triggers that
+are placed in the solution code. These triggers and the resulting behavior they
+cause are highly customizable.
 
 
 ## Getting Started 🚀
