@@ -7,6 +7,7 @@ This module contains the PrimeConverter class, which is used to convert solution
 import os
 import shutil
 from pact.convert.utils.file_converter import FileConverter
+from pact.zip.zip_assignment import zip_assignment_dir
 
 # The name of the generated student version of the assignment
 GENERATED_LOCATION_NAME = "STUDENT_VERSION"
@@ -40,6 +41,15 @@ class PrimeConverter:
 
         # Convert the source file/folder
         self._convert(source_file_or_folder, self.master_generation_location)
+
+        # If the source file/folder is a folder, zip the folder
+        if os.path.isdir(source_file_or_folder):
+            zip_assignment_dir(
+                os.path.join(
+                    self.master_generation_location,
+                    os.path.basename(source_file_or_folder),
+                )
+            )
 
     def _convert(self, source_file_or_folder: str, generation_location: str):
         """
@@ -93,8 +103,12 @@ class PrimeConverter:
         if self.master_generation_location == source_file_or_folder:
             return False
 
-        # If the file/folder contains pycache, don't convert it
-        if "__pycache__" in source_file_or_folder:
+        # Ignore pycache files
+        if "__pycache__" in source_file_or_folder or ".pyc" in source_file_or_folder:
+            return False
+
+        # Ignore .DS_Store files
+        if ".DS_Store" in source_file_or_folder:
             return False
 
         return True

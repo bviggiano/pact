@@ -1,3 +1,5 @@
 # `pact/zip`
 
-TODO
+This directory contains scripts that are utilized to generate zip files.
+
+
