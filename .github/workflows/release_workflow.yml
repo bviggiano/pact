@@ -1,0 +1,59 @@
+name: Release workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: latest
+        auto-update-conda: false
+        auto-activate-base: false
+
+    - name: Configure Conda
+      run: |
+        conda config --set auto_activate_base false
+
+    - name: Create and Activate Conda Environment
+      run: |
+        . $CONDA/etc/profile.d/conda.sh
+        conda env create -f ./environment.yml || exit 1
+        conda activate pact_env || exit 1
+        pip install -e .
+
+    - name: Run conversion script and tests
+      run: |
+        python pact/convert_all.py
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        body: "These zip files contain assignment versions that are ready to be distributed to students."
+        draft: false
+        prerelease: false
+
+    - name: Upload all assignment zips
+      run: |
+        for zip_file in ./assignments/*/STUDENT_VERSION/*.zip; do
+          echo "Uploading ${zip_file}"
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Content-Type: $(file -b --mime-type ${zip_file})" \
+               --data-binary @"${zip_file}" \
+               "${{ steps.create_release.outputs.upload_url }}?name=$(basename ${zip_file})&label=$(basename ${zip_file})"
+          echo "Uploaded ${zip_file}"
+        done
