@@ -3,9 +3,10 @@
 
 PACT is a simple Github based tool designed to help streamline the process of creating, versioning, and distributing programming assignments.
 
-<center>
-    <img src="pact.webp" width="200" height="200">
-</center>
+<p align="center">
+    <img src="pact.webp" width="250" height="250">
+</p>
+
 
 ## What is PACT? 📝
 The core functionality of PACT is to provide a way to automatically convert
@@ -41,7 +42,6 @@ Contributions to PACT are welcome! Whether it's adding new features, fixing bugs
 ## License 📝
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-<center>
+<p align="center">
 Happy Coding! 🚀
-</center>
-
+</p>
