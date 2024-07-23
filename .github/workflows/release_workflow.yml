@@ -39,21 +39,14 @@ jobs:
         echo "Using Python at $(which python)"
         python pact/convert_all.py
 
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create and Upload GitHub Release
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: v${{ github.run_number }}
         release_name: Release v${{ github.run_number }}
         body: "These zip files contain versions of the assignments that are ready to be distributed to students."
         draft: false
         prerelease: false
-
-    - name: Create and Upload GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
         files: ./assignments/*/STUDENT_VERSION/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
