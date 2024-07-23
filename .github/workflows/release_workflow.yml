@@ -54,10 +54,10 @@ jobs:
     - name: Upload all assignment zips
       run: |
         for zip_file in ./assignments/*/STUDENT_VERSION/*.zip; do
-          echo "Uploading ${zip_file}"
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -H "Content-Type: $(file -b --mime-type ${zip_file})" \
-               --data-binary @"${zip_file}" \
-               "${{ steps.create_release.outputs.upload_url }}?name=$(basename ${zip_file})&label=$(basename ${zip_file})"
-          echo "Uploaded ${zip_file}"
-        done
+            echo "Uploading ${zip_file}"
+            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Content-Type: $(file -b --mime-type ${zip_file})" \
+                --data-binary @"${zip_file}" \
+                "${{ steps.create_release.outputs.upload_url }}?name=$(basename ${zip_file})&label=$(basename ${zip_file})"
+            echo "Uploaded ${zip_file}"
+          done
