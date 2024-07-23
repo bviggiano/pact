@@ -39,14 +39,25 @@ jobs:
         echo "Using Python at $(which python)"
         python pact/convert_all.py
 
+    - name: Filter and List Files
+      run: |
+        mkdir -p filtered_files
+        for d in ./assignments/*/STUDENT_VERSION/; do
+          assignment=`basename $(dirname $d)`
+          if [[ -f "${d}/${assignment}.zip" ]]; then
+            cp "${d}/${assignment}.zip" "filtered_files/"
+          fi
+        done
+      shell: bash
+
     - name: Create and Upload GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
+        tag_name: ${{ format('release-{0}-{1}', github.event.push.pushed_at, github.run_number) }}
+        release_name: Release ${{ format('{0}-{1}', github.event.push.pushed_at, github.run_number) }}
         body: "These zip files contain versions of the assignments that are ready to be distributed to students."
         draft: false
         prerelease: false
-        files: ./assignments/*/STUDENT_VERSION/*.zip
+        files: ./filtered_files/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
