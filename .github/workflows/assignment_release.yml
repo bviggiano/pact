@@ -53,7 +53,7 @@ jobs:
     - name: Create and Upload GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: Ready to distribute Assignments - ${{ github.run_number }}
+        tag_name: release-${{ github.run_number }}
         release_name: Assignment Conversion - ${{ github.run_number }}
         body: "The following zip files are the converted versions of the assignments."
         draft: false
