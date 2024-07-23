@@ -32,13 +32,10 @@ jobs:
         pip install .
       working-directory: ${{ github.workspace }}
 
-    - name: Check current directory and list files
+    - name: Run conversion script
       run: |
-        pwd
-        ls -l
-
-    - name: Run conversion script and tests
-      run: |
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate pact_env
         echo "Using Python at $(which python)"
         python pact/convert_all.py
 
