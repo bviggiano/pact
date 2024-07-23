@@ -50,12 +50,16 @@ jobs:
         done
       shell: bash
 
+    - name: Set datetime
+      id: set_datetime
+      run: echo "::set-output name=datetime::$(date +'%Y-%m-%dT%H:%M:%S')"
+
     - name: Create and Upload GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ format('release-{0}-{1}', github.event.push.pushed_at, github.run_number) }}
-        release_name: Release ${{ format('{0}-{1}', github.event.push.pushed_at, github.run_number) }}
-        body: "These zip files contain versions of the assignments that are ready to be distributed to students."
+        tag_name: release-${{ env.DATE_TIME }}-${{ github.run_number }}
+        release_name: Release ${{ env.DATE_TIME }}-${{ github.run_number }}
+        body: "The following zip files are the converted versions of the assignments."
         draft: false
         prerelease: false
         files: ./filtered_files/*.zip
