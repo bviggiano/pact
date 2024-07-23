@@ -41,13 +41,13 @@ jobs:
 
     - name: Create GitHub Release
       id: create_release
-      uses: actions/create-release@v1
+      uses: actions/create-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: v${{ github.run_number }}
         release_name: Release v${{ github.run_number }}
-        body: "These zip files contain assignment versions that are ready to be distributed to students."
+        body: "These zip files contain versions of the assignments that are ready to be distributed to students."
         draft: false
         prerelease: false
 
