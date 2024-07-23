@@ -26,14 +26,14 @@ The easiest way to get started with PACT is to use this repository as a template
 4. On the repository creation page, choose a repository name (e.g., `CS101`) and set the visibility to `private`.
 
 
-Finally, after you have your private repository set up, set up the pact conda environment by running the following commands from the root of the repository:
+Finally, after you have your private repository set up, set up the PACT conda environment by running the following commands from the root of the repository:
 ```bash
 conda env create -f environment.yml
 conda activate pact_env
 pip install -e .
 ```
 
-You can begin developing your assignments to the repository! Check out the [./pact/README.md](./pact/README.md) file for more information on how to use PACT to create assignments.
+You can begin developing your assignments in the repository! Check out the [./pact/README.md](./pact/README.md) file for more information on how to use PACT to create assignments.
 
 
 ## Contributing 🤝
