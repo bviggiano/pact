@@ -1,4 +1,4 @@
-name: Release workflow
+name: Assignment Release Workflow
 
 on:
   push:
@@ -50,15 +50,11 @@ jobs:
         done
       shell: bash
 
-    - name: Set datetime
-      id: set_datetime
-      run: echo "::set-output name=datetime::$(date +'%Y-%m-%dT%H:%M:%S')"
-
     - name: Create and Upload GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: release-${{ env.DATE_TIME }}-${{ github.run_number }}
-        release_name: Release ${{ env.DATE_TIME }}-${{ github.run_number }}
+        tag_name: Ready to distribute Assignments - ${{ github.run_number }}
+        release_name: Assignment Conversion - ${{ github.run_number }}
         body: "The following zip files are the converted versions of the assignments."
         draft: false
         prerelease: false
