@@ -32,10 +32,15 @@ jobs:
         pip install .
       working-directory: ${{ github.workspace }}
 
+    - name: Check current directory and list files
+      run: |
+        pwd
+        ls -l
+
     - name: Run conversion script and tests
       run: |
+        echo "Using Python at $(which python)"
         python pact/convert_all.py
-      working-directory: ${{ github.workspace }}
 
     - name: Create GitHub Release
       id: create_release
