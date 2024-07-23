@@ -29,7 +29,7 @@ jobs:
         . $CONDA/etc/profile.d/conda.sh
         conda env create -f ./environment.yml || exit 1
         conda activate pact_env || exit 1
-        pip install -e .
+        pip install .
       working-directory: ${{ github.workspace }}
 
     - name: Run conversion script and tests
