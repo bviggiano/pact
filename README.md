@@ -26,12 +26,20 @@ The easiest way to get started with PACT is to use this repository as a template
 4. On the repository creation page, choose a repository name (e.g., `CS101`) and set the visibility to `private`.
 
 
-Finally, after you have your private repository set up, set up the PACT conda environment by running the following commands from the root of the repository:
+After you have your private repository set up, set up the PACT conda environment by running the following commands from the root of the repository:
 ```bash
 conda env create -f environment.yml
 conda activate pact_env
 pip install -e .
 ```
+
+Note: to enable the GitHub workflow that creates ready-to-distribute versions of the assignments, you will need to go into the repository settings and ensure that "Workflow permissions" are set to "Read and write permissions"
+
+- Navigate to repository settings
+- Navigate to `Actions` and select `General`
+- Set Workflow Permissions to `Read and write permissions` and save (You may need to set this at the organization level first if you are creating a repo in a GitHub organization)
+
+
 
 You can begin developing your assignments in the repository! Check out the [./pact/README.md](./pact/README.md) file for more information on how to use PACT to create assignments.
 
