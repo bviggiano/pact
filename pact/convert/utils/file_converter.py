@@ -151,9 +151,17 @@ class FileConverter:
             if remove_flag:
                 new_json["cells"].remove(cell)
 
-        # Process the text in each cell as we would for a normal file
+        # For each cell
         for cell in new_json["cells"]:
+
+            # Process the text in each cell as we would for a normal file
             cell["source"] = self._convert_source_text(cell["source"])
+
+            # Remove outputs from the cells
+            cell["outputs"] = []
+
+            # Reset the cell's execution counts
+            cell["execution_count"] = None
 
         # Convert the new JSON back into a string and return
         return json.dumps(new_json)
