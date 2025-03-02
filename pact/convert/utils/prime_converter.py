@@ -17,6 +17,7 @@ GENERATED_LOCATION_NAME = "STUDENT_VERSION"
 # Special file names to ignore during conversion
 BLACK_LIST_FILE_NAME = "black_list.pact"
 SUB_LIST_FILE_NAME = "sub_list.pact"
+OPTIONS_FILE_NAME = "options.pact"
 
 
 class PrimeConverter:
@@ -41,6 +42,9 @@ class PrimeConverter:
         # Placeholder for white list
         self.sub_list = []
 
+        # Placeholder for options
+        self.options = []
+
     def reset(self):
         """
         Resets the PrimeConverter.
@@ -48,6 +52,7 @@ class PrimeConverter:
         self.master_generation_location = None
         self.black_list = []
         self.sub_list = []
+        self.options = []
 
     def load_black_list(self, source_folder: str):
         """
@@ -73,6 +78,18 @@ class PrimeConverter:
         with open(os.path.join(source_folder, SUB_LIST_FILE_NAME), "r") as file:
             self.sub_list = file.read().splitlines()
 
+    def load_options(self, source_folder: str):
+        """
+        Loads the options for the conversion.
+        """
+
+        if not os.path.exists(os.path.join(source_folder, OPTIONS_FILE_NAME)):
+            return
+
+        # Load the options
+        with open(os.path.join(source_folder, OPTIONS_FILE_NAME), "r") as file:
+            self.options = file.read().splitlines()
+
     def convert(self, source_file_or_folder: str):
         """
         Converts the solution version of the assignment file/folder into student versions.
@@ -88,8 +105,10 @@ class PrimeConverter:
         if os.path.isdir(source_file_or_folder):
             self.load_black_list(source_file_or_folder)
             self.load_sub_list(source_file_or_folder)
+            self.load_options(source_file_or_folder)
             print(f"Black list: {self.black_list}")
             print(f"Sub list: {self.sub_list}")
+            print(f"Options: {self.options}")
 
         # Set the master generation location (to be used by the conversion filter)
         self.master_generation_location = self._prepare_generation_location(
@@ -103,13 +122,14 @@ class PrimeConverter:
         if os.path.isdir(source_file_or_folder):
 
             # Create the student submission zip file
-            create_submission_file(
-                os.path.join(
-                    self.master_generation_location,
-                    os.path.basename(source_file_or_folder),
-                ),
-                sub_list=self.sub_list,
-            )
+            if "no_submission_file" not in self.options:
+                create_submission_file(
+                    os.path.join(
+                        self.master_generation_location,
+                        os.path.basename(source_file_or_folder),
+                    ),
+                    sub_list=self.sub_list,
+                )
 
             # Create the zipped assignment folder
             zip_assignment_dir(
@@ -183,6 +203,7 @@ class PrimeConverter:
         if os.path.basename(source_file_or_folder) in [
             BLACK_LIST_FILE_NAME,
             SUB_LIST_FILE_NAME,
+            OPTIONS_FILE_NAME,
         ]:
             return False
 
