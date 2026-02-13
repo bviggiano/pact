@@ -8,8 +8,6 @@
 
 In this README, we will explain the basics of how to use `pact` and this template repository.
 
----
-
 ## Summary
 
 `pact` works by converting fully solved programming assignments into versions that
@@ -17,99 +15,34 @@ are ready to distribute to students. This customizable behavior is achieved
 through the use of keywords and comments in the solution version of the assignments
 that `pact` can recognize and act upon.
 
----
+## How to create an assignment using `pact` 📝
 
-## 📝 How to create an assignment using `pact`
+1. **Create a new assignment directory**: Create a new directory in the `assignments` folder of this repository. This directory will contain the solution version of the assignment.
 
-<table>
-<tr>
-<td width="60">
+2. **Add the solution code**: Add the solution code for the assignment to the directory you created in step 1. This code should be fully solved.
 
-**Step**
+3. **Add `pact` keywords**: Add `pact` keywords to the solution code to define the regions that should be masked in the student version of the assignment. `pact` keywords are used to define code blocks, line masks, and other types of masking (Read more on this below).
 
-</td>
-<td>
+4. **Generate the student versions**: To create the student versions of the assignments in the `assignments` directory, run the following command from the root of the repository:
 
-**Action**
+    ```bash
+    python pact/convert_all.py
+    ```
 
-</td>
-</tr>
-<tr>
-<td align="center">
+    This command will generate a new directory within each assignment containing the student ready version.
 
-🗂️
+In addition, we have included a GitHub workflow that will automatically run the `convert_all.py` script whenever you push to the `main` branch of the repository and will generate zip files containing the student versions of the assignments as a release.
 
-</td>
-<td>
 
-**Create a new assignment directory** in the `assignments` folder. This directory will contain the solution version.
+## How do I use `pact` keywords? 🤔
 
-</td>
-</tr>
-<tr>
-<td align="center">
+Let's take a look at the different types of `pact` keywords and how they can be used to customize the behavior of the conversion process.
 
-✍️
+### Code Blocks `<>`
 
-</td>
-<td>
-
-**Add the solution code** — fully solved and working.
-
-</td>
-</tr>
-<tr>
-<td align="center">
-
-🔑
-
-</td>
-<td>
-
-**Add `pact` keywords** to define the regions that should be masked in the student version (see below).
-
-</td>
-</tr>
-<tr>
-<td align="center">
-
-⚙️
-
-</td>
-<td>
-
-**Generate the student versions** by running:
-
-```bash
-python pact/convert_all.py
-```
-
-</td>
-</tr>
-</table>
-
-> [!TIP]
-> A GitHub workflow is included that automatically runs `convert_all.py` when you push to `main` and creates a release with zip files of all student versions.
-
----
-
-## 🤔 How do I use `pact` keywords?
-
-Let's look at the different types of `pact` keywords and how they customize the conversion process.
-
-<br>
-
-### <img src="https://img.shields.io/badge/Code_Blocks-<>-blue?style=flat-square" alt="Code Blocks">
-
-Code blocks are used to **completely mask (and optionally replace)** entire portions of solution code.
-
-<table>
-<tr>
-<th>🔐 Solution Version</th>
-<th>📄 Student Version</th>
-</tr>
-<tr>
-<td>
+The most basic type of keyword trigger is a code block! Code blocks are used to
+completely mask (and optionally replace) entire portions of solution code. Let's
+look at an example:
 
 ```python
 def forward(self, x):
@@ -125,8 +58,10 @@ def forward(self, x):
     return x
 ```
 
-</td>
-<td>
+In this example, the `STUDENT_CODE_START` and `STUDENT_CODE_END` keywords are used
+to define a block of code that should be masked in the student version of the assignment.
+The masked code will be replaced with a customizable comment indicating that the student
+should complete the code in that region.
 
 ```python
 def forward(self, x):
@@ -144,35 +79,28 @@ def forward(self, x):
     return x
 ```
 
-</td>
-</tr>
-</table>
-
-To use a codeblock, wrap the code you want to mask with the start and end keyword strings.
-See all available code block types in [`./convert/codeblocks.py`](./convert/codeblocks.py)
+To use a codeblock, simply wrap the code you want to mask in the solution version
+of the assignment with the start and stop keyword strings of the code block type
+of your choosing. To see all available code block types and define your own custom
+code blocks, check out: [`./convert/codeblocks.py`](./convert/codeblocks.py)
 
 > [!IMPORTANT]
-> **Rules for Code Blocks:**
-> - Start and end keywords must be on **separate lines**
-> - Everything between triggers is masked, **including the trigger lines themselves**
-> - Code blocks **cannot be nested**
+> **Code Block Rules:**
+> - Start and end keywords must be placed on separate lines
+> - Code blocks mask everything between the keywords, **including the lines containing the keywords themselves**
+> - Code blocks can NOT be nested within each other
 
-<br>
 
-### <img src="https://img.shields.io/badge/Line_Masks-={}-orange?style=flat-square" alt="Line Masks">
+### Line Masking `= {}`
 
-Line masks allow you to **partially mask lines**, providing more structure to students.
-
-<table>
-<tr>
-<th>🔐 Solution Version</th>
-<th>📄 Student Version</th>
-</tr>
-<tr>
-<td>
+`pact` also supports the ability to partially mask lines, allowing us to provide a
+bit more structure to the student version of the assignment. For example, lets say
+we have the following function and we only want to mask the part of the line after
+the assignment operator:
 
 ```python
-self.transformer = nn.ModuleDict( # MASK_ASSIGNMENT
+
+self.transformer = nn.ModuleDict( # MASK_ASSINGMENT
             dict(
                 wte=nn.Embedding(config.vocab_size, config.n_embd),
                 wpe=nn.Embedding(config.block_size, config.n_embd),
@@ -182,53 +110,60 @@ self.transformer = nn.ModuleDict( # MASK_ASSIGNMENT
             )
         )
 
-self.lm_head = nn.Linear(...) # MASK_ASSIGNMENT
+self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False) # MASK_ASSIGNMENT
+
 ```
 
-</td>
-<td>
+In this example, the `MASK_ASSIGNMENT` keyword is used to define a line mask that
+will only mask the portion of the line after the assignment operator. The masked
+code will be replaced with a customizable comment indicating that the student should
+complete the code in that region.
 
 ```python
+
 self.transformer = None # TODO: Implement
 
 self.lm_head = None # TODO: Implement
+
 ```
 
-</td>
-</tr>
-</table>
-
-To use a line mask, add the keyword string to the end of the line you want to mask.
-See all available line mask types in [`./convert/masks.py`](./convert/masks.py)
+To use a line mask, simply add the keyword string of the line mask type of your choosing
+to the end of the line you want to mask in the solution version of the assignment. To
+see all available line mask types and define your own custom line masks, check out:
+[`./convert/masks.py`](./convert/masks.py)
 
 > [!IMPORTANT]
-> **Rules for Line Masks:**
-> - Masks start from a predefined character (e.g., `=`) and replace everything after it
-> - Masking **continues across multiple lines** until an empty line is found
-> - Ensure a **blank line** between separate masked sections
+> **Line Mask Rules:**
+> - Line masks are defined to mask everything after a predefined character. This character can be any character you choose, but it must be in any line you want to mask.
+>   - In the above example, we chose the assignment operator `=` as the character to define start of the line mask.
+> - Line masks will continue to mask all lines after the line the keyword was found on *until an empty line (line only containing whitespace) is found.*
+>   - In the above example, this allows us to mask the entire assignment statement for self.transformer even though it spans multiple lines.
 
-<br>
 
-### <img src="https://img.shields.io/badge/Jupyter_Notebooks-📒-yellow?style=flat-square" alt="Notebooks">
+### Masking `ipynb` files 📒
 
-For Jupyter notebooks (`.ipynb` files), you can exclude entire cells from the student version.
+Jupyter notebooks (`.ipynb` files) are commonly used for creating programming assignments.
+In addition to the normal functionality of `pact`, we have added a special keyword that allows
+you to mask entire cells in a Jupyter notebook. This is useful for hiding entire sections of
+code or markdown that you want to keep hidden from students.
 
-Simply add `ANSWER_KEY_CELL` anywhere within a cell to exclude it completely.
+To exclude an entire cell from the student version of the `ipynb` file, simply add the following
+keyword anywhere within the cell: `ANSWER_KEY_CELL`.
 
----
 
-## 📁 Special Files
+### Special Files 📁
 
-Place these files in your assignment's root directory to customize conversion behavior:
+In addition to the keywords described above, `pact` also recognizes a few
+special files that can be used to customize the behavior of the conversion process.
 
 | File | Purpose |
 |:-----|:--------|
-| <img src="https://img.shields.io/badge/black__list.pact-Exclude_files-red?style=flat-square" alt="blacklist"> | List files/folders to **exclude** from student version |
-| <img src="https://img.shields.io/badge/sub__list.pact-Submission_files-green?style=flat-square" alt="sublist"> | List files that should be in student **submissions** |
-| <img src="https://img.shields.io/badge/options.pact-Options-purple?style=flat-square" alt="options"> | Conversion options (e.g., `no_submission_file`) |
+| `black_list.pact` | List files/folders to **exclude** from student version |
+| `sub_list.pact` | List files that should be in student **submissions** |
+| `options.pact` | Conversion options (e.g., `no_submission_file`) |
 
 <details>
-<summary><strong>📋 Example: black_list.pact</strong></summary>
+<summary><b>Example: black_list.pact</b></summary>
 
 ```
 answer_output.txt
@@ -236,11 +171,10 @@ hidden_tests/
 ```
 
 These files/folders will be excluded from the student version.
-
 </details>
 
 <details>
-<summary><strong>📋 Example: sub_list.pact</strong></summary>
+<summary><b>Example: sub_list.pact</b></summary>
 
 ```
 model.py
@@ -248,35 +182,32 @@ answer_output.txt
 ```
 
 A `create_submission_zip.py` script will be generated that packages these files.
-
+If no `sub_list.pact` file is found, the script will create a zip file containing all the files in the student version of the assignment (with the original directory structure preserved).
 </details>
 
 <details>
-<summary><strong>📋 Example: options.pact</strong></summary>
+<summary><b>Example: options.pact</b></summary>
 
 ```
 no_submission_file
 ```
 
 This skips generation of the `create_submission_zip.py` helper script.
-
 </details>
 
----
 
-## 🎨 Creating Custom Codeblocks and Masks
+## Creating Custom Codeblocks and Masks 🎨
 
-`pact` is designed to be extensible. Create your own types to fit your specific needs.
+`pact` is designed to be extensible. You can create your own custom codeblock types and mask types to fit your specific needs.
 
-<br>
+### Creating a Custom Codeblock
 
-### Custom Codeblock
-
-Edit [`./convert/codeblocks.py`](./convert/codeblocks.py):
+To add a new codeblock type, edit [`./convert/codeblocks.py`](./convert/codeblocks.py):
 
 ```python
 from pact.convert.utils.codeblock_infra import CodeBlockType
 
+# Define your custom codeblock
 BONUS_CODE = CodeBlockType(
     name="Bonus Code Block",
     start_trigger_str="BONUS_START",
@@ -284,28 +215,27 @@ BONUS_CODE = CodeBlockType(
     replacement_str="""
 # ========== BONUS CHALLENGE ==========
 # This is an optional bonus exercise.
+# Remove this comment and add your implementation.
 pass
 # =====================================
 """,
 )
 ```
 
-| Parameter | Description |
-|:----------|:------------|
-| `name` | Descriptive name (used in error messages) |
-| `start_trigger_str` | String that marks the beginning of the block |
-| `end_trigger_str` | String that marks the end of the block |
-| `replacement_str` | Text that replaces the entire block (use `""` to remove entirely) |
+**Parameters:**
+- `name`: A descriptive name for the codeblock (used in error messages)
+- `start_trigger_str`: The string that marks the beginning of the block
+- `end_trigger_str`: The string that marks the end of the block
+- `replacement_str`: The text that replaces the entire block (including trigger lines). Use an empty string `""` to remove the block entirely.
 
-<br>
+### Creating a Custom Mask
 
-### Custom Mask
-
-Edit [`./convert/masks.py`](./convert/masks.py):
+To add a new mask type, edit [`./convert/masks.py`](./convert/masks.py):
 
 ```python
 from pact.convert.utils.mask_infra import MaskType
 
+# Define your custom mask
 MASK_RETURN_VALUE = MaskType(
     name="Return Value Mask",
     trigger_str="MASK_RETURN",
@@ -314,93 +244,115 @@ MASK_RETURN_VALUE = MaskType(
 )
 ```
 
-| Parameter | Description |
-|:----------|:------------|
-| `name` | Descriptive name (used in error messages) |
-| `trigger_str` | String that triggers the mask (place in a comment) |
-| `start_char` | Character/string where masking begins |
-| `mask_str` | Text that replaces the masked portion |
+**Parameters:**
+- `name`: A descriptive name for the mask (used in error messages)
+- `trigger_str`: The string that triggers the mask (place in a comment on the line)
+- `start_char`: The character/string where masking begins (everything from this point to end of line is replaced)
+- `mask_str`: The text that replaces the masked portion
 
----
 
-## 🐍 Programmatic API
+## Programmatic API 🐍
 
-Use `pact` directly in your Python scripts:
+You can use `pact` programmatically in your Python scripts:
 
 ```python
 from pact.convert.utils.prime_converter import PrimeConverter
 
-# Convert an entire assignment directory
+# Create a converter
 converter = PrimeConverter()
+
+# Convert a single file
+converter.convert("path/to/solution_file.py")
+
+# Convert an entire assignment directory
 converter.convert("path/to/assignment_folder")
 ```
 
 <details>
-<summary><strong>🔧 Advanced: Using FileConverter directly</strong></summary>
+<summary><b>Advanced: Using FileConverter directly</b></summary>
+
+For more control, you can use the `FileConverter` directly:
 
 ```python
 from pact.convert.utils.file_converter import FileConverter
 from pact.convert.codeblocks import CODEBLOCK_TYPES
 from pact.convert.masks import MASKTYPES
 
+# Create a file converter with default codeblocks and masks
 converter = FileConverter(
     codeblock_types=CODEBLOCK_TYPES,
     mask_types=MASKTYPES,
 )
 
+# Convert a single file to a destination folder
 converter.convert_file(
     source_file_path="path/to/solution.py",
     destination_folder_path="path/to/output/",
 )
 ```
-
 </details>
 
----
 
-## 🔧 Troubleshooting
+## Troubleshooting 🔧
 
-### <img src="https://img.shields.io/badge/InvalidCodeBlockError-red?style=flat-square" alt="Error">
+### `InvalidCodeBlockError`
 
 This error occurs when codeblocks are not properly defined.
 
-| Cause | Example |
-|:------|:--------|
-| **Unclosed block** | Missing `# STUDENT_CODE_END` |
-| **Mismatched triggers** | Using `KEY_ONLY_END` to close `STUDENT_CODE_START` |
-| **Nested blocks** | Placing one codeblock inside another |
-| **Multiple triggers** | Two triggers on the same line |
+**Common causes:**
+- **Unclosed codeblock**: You have a start trigger without a matching end trigger.
+  ```python
+  # STUDENT_CODE_START
+  code here
+  # Missing STUDENT_CODE_END!
+  ```
+- **Mismatched triggers**: The end trigger doesn't match the start trigger type.
+  ```python
+  # STUDENT_CODE_START
+  code here
+  # KEY_ONLY_END  # Wrong! Should be STUDENT_CODE_END
+  ```
+- **Nested codeblocks**: You cannot nest one codeblock inside another.
+  ```python
+  # STUDENT_CODE_START
+  # KEY_ONLY_START  # Error! Cannot nest blocks
+  code
+  # KEY_ONLY_END
+  # STUDENT_CODE_END
+  ```
+- **Multiple triggers on one line**: Each line can only contain one trigger.
+  ```python
+  # STUDENT_CODE_START KEY_ONLY_START  # Error!
+  ```
 
-<br>
-
-### <img src="https://img.shields.io/badge/InvalidMaskError-red?style=flat-square" alt="Error">
+### `InvalidMaskError`
 
 This error occurs when masks are not properly defined.
 
-| Cause | Solution |
-|:------|:---------|
-| **Missing start character** | Ensure the line with the mask trigger contains the `start_char` (e.g., `=`) |
-| **Nested masks** | Add a **blank line** between masked sections |
+**Common causes:**
+- **Missing start character**: The first line with a mask trigger must contain the `start_char`.
+  ```python
+  some_code()  # MASK_ASSIGNMENT  # Error! No '=' on this line
+  ```
+- **Nested masks**: You cannot have multiple mask triggers active simultaneously.
+  ```python
+  x = value  # MASK_ASSIGNMENT
+  y = other  # MASK_ASSIGNMENT  # Error! Previous mask still active (no blank line)
+  ```
 
+**Solution:** Ensure there's a blank line between masked sections:
 ```python
-# ❌ Wrong - no blank line between masks
-x = value  # MASK_ASSIGNMENT
-y = other  # MASK_ASSIGNMENT
-
-# ✅ Correct - blank line deactivates previous mask
 x = value  # MASK_ASSIGNMENT
 
-y = other  # MASK_ASSIGNMENT
+y = other  # MASK_ASSIGNMENT  # OK! Blank line deactivated previous mask
 ```
 
----
+## Tips 💡
 
-## 💡 Tips
+1. **Use comments for triggers**: Place trigger strings inside comments so they don't affect code execution in the solution version.
 
-> **Use comments for triggers** — Place trigger strings inside comments so they don't affect code execution in the solution version.
+2. **Test your solution first**: Make sure your solution code runs correctly before adding `pact` triggers.
 
-> **Test your solution first** — Make sure your solution code runs correctly before adding `pact` triggers.
+3. **Check indentation**: The replacement string for codeblocks will be indented to match the start trigger line's indentation.
 
-> **Check indentation** — Replacement strings for codeblocks will be indented to match the start trigger line.
-
-> **Blank lines matter for masks** — Masks continue until a blank line is encountered. Use this to mask multi-line expressions.
+4. **Blank lines matter for masks**: Masks continue until a blank line is encountered. Use this to mask multi-line expressions.
