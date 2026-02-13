@@ -4,12 +4,17 @@ prime_converter.py
 This module contains the PrimeConverter class, which is used to convert solution versions of assignments into student versions.
 """
 
+from __future__ import annotations
+
+import logging
 import os
 import shutil
 from pact.convert.utils.file_converter import FileConverter
 from pact.zip.zip_assignment import zip_assignment_dir
 from pact.zip.zip_submission import create_submission_file
 import re
+
+logger = logging.getLogger(__name__)
 
 # The name of the generated student version of the assignment
 GENERATED_LOCATION_NAME = "STUDENT_VERSION"
@@ -106,9 +111,9 @@ class PrimeConverter:
             self.load_black_list(source_file_or_folder)
             self.load_sub_list(source_file_or_folder)
             self.load_options(source_file_or_folder)
-            print(f"Black list: {self.black_list}")
-            print(f"Sub list: {self.sub_list}")
-            print(f"Options: {self.options}")
+            logger.debug("Black list: %s", self.black_list)
+            logger.debug("Sub list: %s", self.sub_list)
+            logger.debug("Options: %s", self.options)
 
         # Set the master generation location (to be used by the conversion filter)
         self.master_generation_location = self._prepare_generation_location(

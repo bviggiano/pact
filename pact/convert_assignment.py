@@ -5,6 +5,8 @@ Creates student versions of assignment files by converting solution versions of
 the files.
 """
 
+from __future__ import annotations
+
 import argparse
 from pact.convert.utils.prime_converter import PrimeConverter
 

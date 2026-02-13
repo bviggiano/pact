@@ -2,6 +2,9 @@
 file_converter.py
 """
 
+from __future__ import annotations
+
+import logging
 import os
 import json
 from typing import List
@@ -12,6 +15,7 @@ from pact.convert.utils.mask_infra import MaskManager, MaskType
 from pact.convert.codeblocks import CODEBLOCK_TYPES
 from pact.convert.masks import MASKTYPES
 
+logger = logging.getLogger(__name__)
 
 IPYNB_CELL_EXCLUDE = "ANSWER_KEY_CELL"
 """
@@ -97,7 +101,7 @@ class FileConverter:
                 with open(source_file_path, "r") as file:
                     og_lines = file.readlines()
             except UnicodeDecodeError:
-                print(f"- WARNING: Could not read file: {source_file_path}. Skipping.")
+                logger.warning("Could not read file: %s. Skipping.", source_file_path)
                 return
 
             # Process the text in the file
@@ -157,11 +161,13 @@ class FileConverter:
             # Process the text in each cell as we would for a normal file
             cell["source"] = self._convert_source_text(cell["source"])
 
-            # Remove outputs from the cells
-            cell["outputs"] = []
+            # Only code cells have outputs and execution_count
+            if cell.get("cell_type") == "code":
+                # Remove outputs from the cells
+                cell["outputs"] = []
 
-            # Reset the cell's execution counts
-            cell["execution_count"] = None
+                # Reset the cell's execution counts
+                cell["execution_count"] = None
 
         # Convert the new JSON back into a string and return
         return json.dumps(new_json)

@@ -2,6 +2,8 @@
 Infrastructure related to codeblocks.
 """
 
+from __future__ import annotations
+
 
 class InvalidCodeBlockError(Exception):
     """
@@ -87,8 +89,9 @@ class CodeBlockManager:
         # Ensure that no codeblocks are currently active
         if self.active_block_type is not None:
             raise InvalidCodeBlockError(
-                f"Tried to activate codeblock '{codeblock_type.name}' while '{self.active_block_type.name}' is still active.",
-                f"Starting line: {starting_line}",
+                f"Tried to activate codeblock '{codeblock_type.name}' while "
+                f"'{self.active_block_type.name}' is still active. "
+                f"Starting line: {starting_line}"
             )
 
         self.active_block_type = codeblock_type
@@ -107,7 +110,8 @@ class CodeBlockManager:
         # Ensure that the trigger is of the correct codeblock type
         if self.active_block_type != codeblock_type:
             raise InvalidCodeBlockError(
-                f"Expected to deactivate codeblock '{self.active_block_type.name}', but found '{codeblock_type.name}' end trigger instead."
+                f"Expected to deactivate codeblock '{self.active_block_type.name}', "
+                f"but found '{codeblock_type.name}' end trigger instead. "
                 f"Ending line: {current_line}"
             )
 
@@ -189,7 +193,7 @@ class CodeBlockManager:
         return self.active_block_type is not None
 
 
-def get_line_indentation(current_line: str) -> int:
+def get_line_indentation(current_line: str) -> str:
     """
     Returns the leading whitespace indentation of the current line.
 
@@ -201,14 +205,17 @@ def get_line_indentation(current_line: str) -> int:
     """
     indentation_characters = ["\t", " "]
 
-    # If the line does not start with a valid indentation character, return empty string
-    if current_line[0] not in indentation_characters:
+    # If the line is empty or does not start with a valid indentation character, return empty string
+    if not current_line or current_line[0] not in indentation_characters:
         return ""
 
     # Return the leading whitespace indentation of the current line
     for i, char in enumerate(current_line):
         if char not in indentation_characters:
             return current_line[:i]
+
+    # Entire line is whitespace
+    return current_line
 
 
 class CodeBlockType:

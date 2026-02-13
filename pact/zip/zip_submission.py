@@ -4,6 +4,8 @@ zip_submission.py
 This file creates a python file students can utilize to submit their assignments.
 """
 
+from __future__ import annotations
+
 import os
 import zipfile
 import shutil

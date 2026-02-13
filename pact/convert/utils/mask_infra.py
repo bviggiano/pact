@@ -5,6 +5,8 @@ This file contains the Masker class, which is used to partially mask sections
 of code in a file.
 """
 
+from __future__ import annotations
+
 
 class InvalidMaskError(Exception):
     """
@@ -74,7 +76,8 @@ class MaskManager:
         # If the start character is not found, raise an error
         if start_char_index == -1:
             raise InvalidMaskError(
-                f"Start character '{self.active_mask_type.start_char}' not found in masked line: {line}"
+                f"Start character '{self.active_mask_type.start_char}' not found in "
+                f"masked line: {line}. "
                 f"The first line of a mask must contain the mask type's start character."
             )
 
@@ -92,7 +95,8 @@ class MaskManager:
         # Ensure no other mask is active
         if self.active_mask_type is not None:
             raise InvalidMaskError(
-                f"Tried to activate a second mask type '{mask_type.name}' while '{self.active_mask_type.name}' is still active."
+                f"Tried to activate a second mask type '{mask_type.name}' while "
+                f"'{self.active_mask_type.name}' is still active. "
                 f"Ensure that newlines are present between mask use."
             )
 

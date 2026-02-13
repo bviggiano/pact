@@ -4,6 +4,8 @@ zip_utils.py
 This module contains utility functions for zipping directories.
 """
 
+from __future__ import annotations
+
 import os
 import zipfile
 

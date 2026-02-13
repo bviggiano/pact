@@ -12,8 +12,10 @@ Usage:
     named '<STUDENT_ID>_submission.zip' in the assignment directory.
 
 Run this script from the root directory of the assignment to create a zip file
-named '<STUDENT_ID>_submission.zip' in the assignment directory. 
+named '<STUDENT_ID>_submission.zip' in the assignment directory.
 """
+
+from __future__ import annotations
 
 # TODO: Specify your SUNet ID here
 STUDENT_ID = None

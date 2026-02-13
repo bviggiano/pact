@@ -5,6 +5,8 @@ This script converts all solution versions of assignments in the assignments
 folder into student versions.
 """
 
+from __future__ import annotations
+
 import os
 from pact.convert_assignment import PrimeConverter
 
