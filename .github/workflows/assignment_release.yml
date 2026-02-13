@@ -54,7 +54,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: release-${{ github.run_number }}
-        release_name: Assignment Conversion - ${{ github.run_number }}
+        name: Assignment Conversion - ${{ github.run_number }}
         body: "The following zip files are the converted versions of the assignments."
         draft: false
         prerelease: false
