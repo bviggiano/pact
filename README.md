@@ -1,7 +1,7 @@
 # Programming Assignment Creation Tool (PACT) 📄
 
 <p align="center">
-  <a href="https://github.com/bviggiano/pact/actions"><img src="https://img.shields.io/github/actions/workflow/status/bviggiano/pact/convert.yml?style=flat-square&logo=github&label=build" alt="Build Status"></a>
+  <a href="https://github.com/bviggiano/pact/actions/workflows/assignment_release.yml"><img src="https://img.shields.io/github/actions/workflow/status/bviggiano/pact/assignment_release.yml?branch=main&style=flat-square&logo=github&label=build" alt="Build Status"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
   <a href="https://github.com/bviggiano/pact/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License: MIT"></a>
   <a href="https://github.com/bviggiano/pact"><img src="https://img.shields.io/badge/template-use_this-purple?style=flat-square&logo=github" alt="Use This Template"></a>
