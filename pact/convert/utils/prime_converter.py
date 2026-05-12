@@ -24,6 +24,14 @@ BLACK_LIST_FILE_NAME = "black_list.pact"
 SUB_LIST_FILE_NAME = "sub_list.pact"
 OPTIONS_FILE_NAME = "options.pact"
 
+# Patterns always excluded from STUDENT_VERSION/ output, even without a
+# per-assignment black_list.pact. Per-assignment black lists extend these.
+DEFAULT_BLACK_LIST = [
+    r"\.DS_Store$",
+    r"__pycache__",
+    r"\.ipynb_checkpoints",
+]
+
 
 class PrimeConverter:
     """
@@ -41,8 +49,9 @@ class PrimeConverter:
         # Placeholder for the master generation location
         self.master_generation_location = None
 
-        # Placeholder for black list
-        self.black_list = []
+        # Black list starts with built-in defaults; per-assignment patterns
+        # are appended in load_black_list().
+        self.black_list = list(DEFAULT_BLACK_LIST)
 
         # Placeholder for white list
         self.sub_list = []
@@ -55,13 +64,14 @@ class PrimeConverter:
         Resets the PrimeConverter.
         """
         self.master_generation_location = None
-        self.black_list = []
+        self.black_list = list(DEFAULT_BLACK_LIST)
         self.sub_list = []
         self.options = []
 
     def load_black_list(self, source_folder: str):
         """
-        Loads the black list of files to ignore during conversion.
+        Loads the black list of files to ignore during conversion. Per-assignment
+        patterns extend DEFAULT_BLACK_LIST rather than replacing it.
         """
 
         if not os.path.exists(os.path.join(source_folder, BLACK_LIST_FILE_NAME)):
@@ -69,7 +79,10 @@ class PrimeConverter:
 
         # Load the black list
         with open(os.path.join(source_folder, BLACK_LIST_FILE_NAME), "r") as file:
-            self.black_list = file.read().splitlines()
+            user_patterns = [
+                line for line in file.read().splitlines() if line.strip()
+            ]
+        self.black_list = list(DEFAULT_BLACK_LIST) + user_patterns
 
     def load_sub_list(self, source_folder: str):
         """
@@ -196,12 +209,9 @@ class PrimeConverter:
         if self.master_generation_location == source_file_or_folder:
             return False
 
-        # Ignore pycache files
-        if "__pycache__" in source_file_or_folder or ".pyc" in source_file_or_folder:
-            return False
-
-        # Ignore .DS_Store files
-        if ".DS_Store" in source_file_or_folder:
+        # Ignore compiled python bytecode (.pyc); __pycache__ itself is covered
+        # by DEFAULT_BLACK_LIST below.
+        if ".pyc" in source_file_or_folder:
             return False
 
         # Ignore special files
