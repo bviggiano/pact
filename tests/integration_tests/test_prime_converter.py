@@ -7,6 +7,7 @@ import pytest
 
 from pact.convert.utils.prime_converter import (
     BLACK_LIST_FILE_NAME,
+    DEFAULT_BLACK_LIST,
     GENERATED_LOCATION_NAME,
     OPTIONS_FILE_NAME,
     SUB_LIST_FILE_NAME,
@@ -22,7 +23,7 @@ class TestPrimeConverterInit:
         converter = PrimeConverter()
         assert converter.file_converter is not None
         assert converter.master_generation_location is None
-        assert converter.black_list == []
+        assert converter.black_list == list(DEFAULT_BLACK_LIST)
         assert converter.sub_list == []
         assert converter.options == []
 
@@ -37,7 +38,7 @@ class TestPrimeConverterInit:
         converter.reset()
 
         assert converter.master_generation_location is None
-        assert converter.black_list == []
+        assert converter.black_list == list(DEFAULT_BLACK_LIST)
         assert converter.sub_list == []
         assert converter.options == []
 
@@ -59,10 +60,10 @@ class TestPrimeConverterLoadConfig:
         assert "secret.txt" in converter.black_list
 
     def test_load_black_list_missing_file(self, tmp_path):
-        """Missing black_list.pact doesn't raise error."""
+        """Missing black_list.pact doesn't raise error; defaults remain."""
         converter = PrimeConverter()
         converter.load_black_list(str(tmp_path))  # Should not raise
-        assert converter.black_list == []
+        assert converter.black_list == list(DEFAULT_BLACK_LIST)
 
     def test_load_sub_list(self, tmp_path):
         """Sub list is loaded from file."""
@@ -152,6 +153,24 @@ class TestConversionFilter:
         assert converter.conversion_filter("/path/to/main.py") is True
         assert converter.conversion_filter("/path/to/README.md") is True
         assert converter.conversion_filter("/path/to/data.json") is True
+
+    def test_default_black_list_filters_without_pact_file(self, converter):
+        """Default ignore patterns apply even with no black_list.pact loaded."""
+        # converter fixture didn't load a black_list.pact; defaults still apply
+        assert converter.conversion_filter("/path/.DS_Store") is False
+        assert converter.conversion_filter("/path/__pycache__/x.pyc") is False
+        assert converter.conversion_filter("/path/.ipynb_checkpoints/nb.ipynb") is False
+
+    def test_default_black_list_merges_with_user_patterns(self, converter):
+        """User patterns extend, don't replace, the defaults."""
+        converter.black_list = list(DEFAULT_BLACK_LIST) + ["custom_secret"]
+        # Defaults still filter
+        assert converter.conversion_filter("/path/.DS_Store") is False
+        assert converter.conversion_filter("/path/.ipynb_checkpoints") is False
+        # User pattern also filters
+        assert converter.conversion_filter("/path/custom_secret.txt") is False
+        # Unrelated file still passes
+        assert converter.conversion_filter("/path/main.py") is True
 
 
 class TestPrimeConverterConvert:
@@ -334,6 +353,80 @@ x = 1
         converter.convert(str(assignment_dir))
 
         assert "main.py" in converter.sub_list
+
+    def test_default_ignores_without_black_list_file(self, tmp_path):
+        """.DS_Store, __pycache__, and .ipynb_checkpoints are excluded with no black_list.pact."""
+        assignment_dir = tmp_path / "assignment"
+        assignment_dir.mkdir()
+
+        (assignment_dir / "main.py").write_text("code")
+        (assignment_dir / ".DS_Store").write_bytes(b"\x00\x00")
+
+        checkpoints = assignment_dir / ".ipynb_checkpoints"
+        checkpoints.mkdir()
+        (checkpoints / "main-checkpoint.ipynb").write_text("{}")
+
+        pycache = assignment_dir / "__pycache__"
+        pycache.mkdir()
+        (pycache / "main.cpython-39.pyc").write_bytes(b"bytecode")
+
+        converter = PrimeConverter()
+        converter.convert(str(assignment_dir))
+
+        output_dir = assignment_dir / GENERATED_LOCATION_NAME / assignment_dir.name
+        assert (output_dir / "main.py").exists()
+        assert not (output_dir / ".DS_Store").exists()
+        assert not (output_dir / ".ipynb_checkpoints").exists()
+        assert not (output_dir / "__pycache__").exists()
+
+    def test_default_ignores_with_custom_black_list(self, tmp_path):
+        """Custom black_list.pact extends defaults rather than replacing them."""
+        assignment_dir = tmp_path / "assignment"
+        assignment_dir.mkdir()
+
+        (assignment_dir / "main.py").write_text("code")
+        (assignment_dir / "secret.txt").write_text("secret")
+        (assignment_dir / ".DS_Store").write_bytes(b"\x00\x00")
+
+        checkpoints = assignment_dir / ".ipynb_checkpoints"
+        checkpoints.mkdir()
+        (checkpoints / "nb-checkpoint.ipynb").write_text("{}")
+
+        # Custom black list mentions only secret.txt
+        (assignment_dir / BLACK_LIST_FILE_NAME).write_text("secret.txt\n")
+
+        converter = PrimeConverter()
+        converter.convert(str(assignment_dir))
+
+        output_dir = assignment_dir / GENERATED_LOCATION_NAME / assignment_dir.name
+        assert (output_dir / "main.py").exists()
+        # Custom pattern filters
+        assert not (output_dir / "secret.txt").exists()
+        # Defaults still filter
+        assert not (output_dir / ".DS_Store").exists()
+        assert not (output_dir / ".ipynb_checkpoints").exists()
+
+    def test_existing_redundant_black_list_still_works(self, tmp_path):
+        """A black_list.pact that redundantly lists default patterns still works."""
+        assignment_dir = tmp_path / "assignment"
+        assignment_dir.mkdir()
+
+        (assignment_dir / "main.py").write_text("code")
+        (assignment_dir / ".DS_Store").write_bytes(b"\x00\x00")
+
+        # Redundantly list a default pattern alongside a custom one
+        (assignment_dir / BLACK_LIST_FILE_NAME).write_text(
+            r"\.DS_Store$" + "\nnotes.md\n"
+        )
+        (assignment_dir / "notes.md").write_text("instructor notes")
+
+        converter = PrimeConverter()
+        converter.convert(str(assignment_dir))
+
+        output_dir = assignment_dir / GENERATED_LOCATION_NAME / assignment_dir.name
+        assert (output_dir / "main.py").exists()
+        assert not (output_dir / ".DS_Store").exists()
+        assert not (output_dir / "notes.md").exists()
 
     def test_nested_directories(self, tmp_path):
         """Nested directory structure is preserved."""
