@@ -133,6 +133,13 @@ class FileConverter:
         with open(file_path, "r") as file:
             og_json = json.load(file)
 
+        # Normalize cell sources: nbformat allows cell.source to be either a
+        # list of lines or a single string. Coerce to list-of-lines so that
+        # _convert_source_text iterates over lines, not characters.
+        for cell in og_json["cells"]:
+            if isinstance(cell["source"], str):
+                cell["source"] = cell["source"].splitlines(keepends=True)
+
         # Determine which cells (if any) should be excluded
         cells_to_remove = [False] * len(og_json["cells"])
 
