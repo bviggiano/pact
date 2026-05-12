@@ -26,10 +26,57 @@ OPTIONS_FILE_NAME = "options.pact"
 
 # Patterns always excluded from STUDENT_VERSION/ output, even without a
 # per-assignment black_list.pact. Per-assignment black lists extend these.
+#
+# Patterns are Python regexes matched against the full path with re.search.
+# Directory-style entries use (^|/)name($|/) so they only match the directory
+# itself or descendants — not unrelated files that happen to contain the name
+# as a substring (e.g. `venv` should not match `prevention.py`).
 DEFAULT_BLACK_LIST = [
+    # OS noise
     r"\.DS_Store$",
-    r"__pycache__",
+    r"(^|/)Thumbs\.db$",
+    r"(^|/)desktop\.ini$",
+    # Jupyter checkpoints (top-level or nested)
     r"\.ipynb_checkpoints",
+    # Compiled Python / bytecode / native extensions
+    r"__pycache__",
+    r"\.py[cod]$",
+    r"\$py\.class$",
+    r"\.so$",
+    # Python virtual environments
+    r"(^|/)\.venv($|/)",
+    r"(^|/)venv($|/)",
+    r"(^|/)env($|/)",
+    r"(^|/)ENV($|/)",
+    # Build / packaging artifacts
+    r"(^|/)build($|/)",
+    r"(^|/)dist($|/)",
+    r"(^|/)wheels($|/)",
+    r"(^|/)eggs($|/)",
+    r"(^|/)\.eggs($|/)",
+    r"\.egg-info($|/)",
+    r"\.egg$",
+    r"(^|/)MANIFEST$",
+    # IDE / editor metadata
+    r"(^|/)\.idea($|/)",
+    r"(^|/)\.vscode($|/)",
+    r"\.swp$",
+    # Type checker / linter caches
+    r"(^|/)\.mypy_cache($|/)",
+    r"(^|/)\.pytype($|/)",
+    r"(^|/)\.ruff_cache($|/)",
+    r"(^|/)\.?dmypy\.json$",
+    # Test / coverage artifacts
+    r"(^|/)\.pytest_cache($|/)",
+    r"(^|/)\.tox($|/)",
+    r"(^|/)\.nox($|/)",
+    r"(^|/)\.coverage(\..*)?$",
+    r"(^|/)coverage\.xml$",
+    r"(^|/)htmlcov($|/)",
+    r"(^|/)\.hypothesis($|/)",
+    # pip artifacts
+    r"(^|/)pip-log\.txt$",
+    r"(^|/)pip-delete-this-directory\.txt$",
 ]
 
 
@@ -207,11 +254,6 @@ class PrimeConverter:
 
         # If the file/folder is in the generated location, don't convert it
         if self.master_generation_location == source_file_or_folder:
-            return False
-
-        # Ignore compiled python bytecode (.pyc); __pycache__ itself is covered
-        # by DEFAULT_BLACK_LIST below.
-        if ".pyc" in source_file_or_folder:
             return False
 
         # Ignore special files

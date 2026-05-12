@@ -54,6 +54,22 @@ KEY_ONLY = CodeBlockType(
 
 
 # =====
+# IPYNB Answer block: This codeblock is used to wrap instructor-written answer-key
+# text inside a Jupyter notebook markdown cell. In the student version, the
+# wrapped region is replaced with a "YOUR ANSWER HERE" placeholder.
+ipynb_answer_replacement_str = """
+<span style='color:green;'> YOUR ANSWER HERE </span>
+"""
+
+IPYNB_ANSWER = CodeBlockType(
+    name="IPYNB Answer Block",
+    start_trigger_str="IPYNB_ANSWER_START",
+    end_trigger_str="IPYNB_ANSWER_END",
+    replacement_str=ipynb_answer_replacement_str,
+)
+
+
+# =====
 # Feel free to implement additional codeblocks as needed here!
 
 

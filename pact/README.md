@@ -150,6 +150,27 @@ code or markdown that you want to keep hidden from students.
 To exclude an entire cell from the student version of the `ipynb` file, simply add the following
 keyword anywhere within the cell: `ANSWER_KEY_CELL`.
 
+#### Answer placeholders in markdown cells
+
+For markdown Q cells where an instructor has drafted a written answer, wrap the
+answer text with `IPYNB_ANSWER_START` / `IPYNB_ANSWER_END`. In the student version,
+the entire region (including the trigger lines) is replaced with a green
+`YOUR ANSWER HERE` placeholder.
+
+```markdown
+**Q1.** Why is X important?
+
+IPYNB_ANSWER_START
+
+[instructor's draft answer goes here]
+
+IPYNB_ANSWER_END
+```
+
+Renders in the student version as:
+
+> <span style='color:green;'> YOUR ANSWER HERE </span>
+
 
 ### Special Files 📁
 

@@ -172,6 +172,83 @@ class TestConversionFilter:
         # Unrelated file still passes
         assert converter.conversion_filter("/path/main.py") is True
 
+    def test_filters_virtual_environments(self, converter):
+        """Common Python virtual environment directory names are filtered."""
+        assert converter.conversion_filter("/proj/.venv") is False
+        assert converter.conversion_filter("/proj/venv") is False
+        assert converter.conversion_filter("/proj/env") is False
+        assert converter.conversion_filter("/proj/ENV") is False
+        assert converter.conversion_filter("/proj/venv/lib/site-packages/x.py") is False
+        # Substring collisions are NOT filtered
+        assert converter.conversion_filter("/proj/prevention.py") is True
+        assert converter.conversion_filter("/proj/environment.yml") is True
+
+    def test_filters_build_artifacts(self, converter):
+        """Build / packaging artifacts are filtered."""
+        assert converter.conversion_filter("/proj/build") is False
+        assert converter.conversion_filter("/proj/dist") is False
+        assert converter.conversion_filter("/proj/wheels") is False
+        assert converter.conversion_filter("/proj/eggs") is False
+        assert converter.conversion_filter("/proj/.eggs") is False
+        assert converter.conversion_filter("/proj/pact.egg-info") is False
+        assert converter.conversion_filter("/proj/pact.egg-info/PKG-INFO") is False
+        assert converter.conversion_filter("/proj/pact.egg") is False
+        assert converter.conversion_filter("/proj/MANIFEST") is False
+
+    def test_filters_compiled_python(self, converter):
+        """Compiled Python and native-extension files are filtered."""
+        assert converter.conversion_filter("/proj/module.pyc") is False
+        assert converter.conversion_filter("/proj/module.pyo") is False
+        assert converter.conversion_filter("/proj/module.pyd") is False
+        assert converter.conversion_filter("/proj/Hello$py.class") is False
+        assert converter.conversion_filter("/proj/_ext.so") is False
+
+    def test_filters_ide_metadata(self, converter):
+        """IDE / editor metadata is filtered."""
+        assert converter.conversion_filter("/proj/.idea") is False
+        assert converter.conversion_filter("/proj/.idea/workspace.xml") is False
+        assert converter.conversion_filter("/proj/.vscode") is False
+        assert converter.conversion_filter("/proj/.vscode/settings.json") is False
+        assert converter.conversion_filter("/proj/main.py.swp") is False
+
+    def test_filters_linter_and_typecheck_caches(self, converter):
+        """mypy/pytype/ruff cache directories and dmypy state are filtered."""
+        assert converter.conversion_filter("/proj/.mypy_cache") is False
+        assert converter.conversion_filter("/proj/.mypy_cache/3.10/x") is False
+        assert converter.conversion_filter("/proj/.pytype") is False
+        assert converter.conversion_filter("/proj/.ruff_cache") is False
+        assert converter.conversion_filter("/proj/.dmypy.json") is False
+        assert converter.conversion_filter("/proj/dmypy.json") is False
+
+    def test_filters_test_and_coverage_artifacts(self, converter):
+        """Test runner and coverage artifacts are filtered."""
+        assert converter.conversion_filter("/proj/.pytest_cache") is False
+        assert converter.conversion_filter("/proj/.tox") is False
+        assert converter.conversion_filter("/proj/.nox") is False
+        assert converter.conversion_filter("/proj/.coverage") is False
+        assert converter.conversion_filter("/proj/.coverage.host.1234") is False
+        assert converter.conversion_filter("/proj/coverage.xml") is False
+        assert converter.conversion_filter("/proj/htmlcov") is False
+        assert converter.conversion_filter("/proj/htmlcov/index.html") is False
+        assert converter.conversion_filter("/proj/.hypothesis") is False
+
+    def test_filters_pip_artifacts(self, converter):
+        """pip log/scratch files are filtered."""
+        assert converter.conversion_filter("/proj/pip-log.txt") is False
+        assert converter.conversion_filter("/proj/pip-delete-this-directory.txt") is False
+
+    def test_filters_os_noise(self, converter):
+        """Windows OS metadata files are filtered."""
+        assert converter.conversion_filter("/proj/Thumbs.db") is False
+        assert converter.conversion_filter("/proj/desktop.ini") is False
+
+    def test_filters_nested_ipynb_checkpoints(self, converter):
+        """Nested .ipynb_checkpoints directories are filtered."""
+        assert (
+            converter.conversion_filter("/proj/subdir/.ipynb_checkpoints/nb-checkpoint.ipynb")
+            is False
+        )
+
 
 class TestPrimeConverterConvert:
     """Integration tests for the convert method."""
@@ -405,6 +482,90 @@ x = 1
         # Defaults still filter
         assert not (output_dir / ".DS_Store").exists()
         assert not (output_dir / ".ipynb_checkpoints").exists()
+
+    def test_expanded_default_ignores_without_black_list_file(self, tmp_path):
+        """Comprehensive Python/IDE/venv/OS artifacts are excluded without black_list.pact."""
+        assignment_dir = tmp_path / "assignment"
+        assignment_dir.mkdir()
+
+        # Files that should survive
+        (assignment_dir / "main.py").write_text("code")
+        (assignment_dir / "environment.yml").write_text("name: test")
+
+        # Compiled / bytecode
+        (assignment_dir / "module.pyc").write_bytes(b"x")
+        (assignment_dir / "module.pyo").write_bytes(b"x")
+        (assignment_dir / "_ext.so").write_bytes(b"x")
+
+        # Virtual environments. macOS' default filesystem is case-insensitive,
+        # so we can't create both "env" and "ENV" side by side; the ENV regex
+        # is covered by the unit-level test_filters_virtual_environments.
+        for vname in (".venv", "venv", "env"):
+            d = assignment_dir / vname
+            d.mkdir()
+            (d / "ignored.py").write_text("x")
+
+        # Build / packaging artifacts
+        for bname in ("build", "dist", "wheels", "eggs", ".eggs", "pact.egg-info"):
+            d = assignment_dir / bname
+            d.mkdir()
+            (d / "ignored.py").write_text("x")
+        (assignment_dir / "MANIFEST").write_text("x")
+        (assignment_dir / "pact.egg").write_text("x")
+
+        # IDE / editor
+        for iname in (".idea", ".vscode"):
+            d = assignment_dir / iname
+            d.mkdir()
+            (d / "ignored.txt").write_text("x")
+        (assignment_dir / "main.py.swp").write_bytes(b"x")
+
+        # Linter / typecheck caches
+        for cname in (".mypy_cache", ".pytype", ".ruff_cache"):
+            (assignment_dir / cname).mkdir()
+        (assignment_dir / ".dmypy.json").write_text("{}")
+        (assignment_dir / "dmypy.json").write_text("{}")
+
+        # Test / coverage
+        for tname in (".pytest_cache", ".tox", ".nox", "htmlcov", ".hypothesis"):
+            (assignment_dir / tname).mkdir()
+        (assignment_dir / ".coverage").write_text("")
+        (assignment_dir / ".coverage.host.123").write_text("")
+        (assignment_dir / "coverage.xml").write_text("<coverage/>")
+
+        # pip
+        (assignment_dir / "pip-log.txt").write_text("")
+        (assignment_dir / "pip-delete-this-directory.txt").write_text("")
+
+        # OS noise
+        (assignment_dir / ".DS_Store").write_bytes(b"\x00")
+        (assignment_dir / "Thumbs.db").write_bytes(b"\x00")
+        (assignment_dir / "desktop.ini").write_text("")
+
+        # Nested ipynb_checkpoints
+        nested = assignment_dir / "src" / ".ipynb_checkpoints"
+        nested.mkdir(parents=True)
+        (nested / "nb-checkpoint.ipynb").write_text("{}")
+        (assignment_dir / "src" / "module.py").write_text("code")
+
+        converter = PrimeConverter()
+        converter.convert(str(assignment_dir))
+
+        output_dir = assignment_dir / GENERATED_LOCATION_NAME / assignment_dir.name
+
+        # Things that should ship
+        assert (output_dir / "main.py").exists()
+        assert (output_dir / "environment.yml").exists()
+        assert (output_dir / "src" / "module.py").exists()
+
+        # Nothing else should
+        present = {p.name for p in output_dir.iterdir()}
+        survivors = {"main.py", "environment.yml", "src", "create_submission_zip.py"}
+        unexpected = present - survivors
+        assert not unexpected, f"Unexpected files in student version: {unexpected}"
+
+        # Nested checkpoint dir excluded even though src/ is kept
+        assert not (output_dir / "src" / ".ipynb_checkpoints").exists()
 
     def test_existing_redundant_black_list_still_works(self, tmp_path):
         """A black_list.pact that redundantly lists default patterns still works."""
